@@ -23,6 +23,9 @@ importers:
         specifier: ^4.7.0
         version: 4.7.0(react-dom@18.2.0)(react@18.2.0)
     devDependencies:
+      '@next-websockets/server':
+        specifier: workspace:*
+        version: link:../server
       '@types/node':
         specifier: ^20
         version: 20.11.21
@@ -44,9 +47,6 @@ importers:
       postcss:
         specifier: ^8
         version: 8.4.35
-      server:
-        specifier: server
-        version: link:../server
       tailwindcss:
         specifier: ^3.3.0
         version: 3.4.1

@@ -4,7 +4,7 @@ import Image from "next/image"
 import { useState } from "react"
 import useWebSocket from "react-use-websocket"
 
-import { type Message } from "server"
+import { type Message } from "@next-websockets/server"
 
 const serverUrl = "ws://localhost:3001"
 

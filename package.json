@@ -6,7 +6,7 @@
     "build": "pnpm --stream -r build",
     "dev:server": "pnpm --filter server dev",
     "dev:client": "pnpm --filter client dev",
-    "start": "pnpm --stream -r start"
+    "start": "pnpm --parallel --stream -r start"
   },
   "keywords": [],
   "author": "",
