@@ -1,0 +1,14 @@
+{
+  "name": "next-websockets",
+  "version": "0.1.0",
+  "description": "",
+  "scripts": {
+    "build": "pnpm --stream -r build",
+    "dev:server": "pnpm --filter server dev",
+    "dev:client": "pnpm --filter client dev",
+    "start": "pnpm --stream -r start"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT"
+}
