@@ -7,7 +7,7 @@ import { cookies } from "next/headers"
 import { cn } from "@/lib/utils"
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar"
 
-import NameModal from "@/components/TestModal"
+import NameModal from "@/components/NameModal"
 
 function getRandomAnimalName() {
   const animals = readFileSync(
