@@ -25,10 +25,10 @@ import {
 import { z } from "zod"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
-import setNicknameCookie from "@/lib/setNicknameCookie"
+import { setNicknameCookie } from "@/lib/cookies"
 
 const formSchema = z.object({
-  nickname: z
+  name: z
     .string()
     .min(2, { message: "Username must be at least 2 characters." })
     .max(50),
@@ -45,16 +45,14 @@ export default function NameModal({
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
-    defaultValues: { nickname: defaultName },
+    defaultValues: { name: defaultName },
   })
 
   // TODO Make this modal look better
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button className="rounded-full p-0">{children}</Button>
-      </DialogTrigger>
+      <DialogTrigger asChild>{children}</DialogTrigger>
 
       <DialogContent className="sm:max-w-[425px] [&>#dialog-close]:hidden">
         <DialogHeader>
@@ -69,19 +67,19 @@ export default function NameModal({
             onSubmit={form.handleSubmit((values) => {
               console.log(values)
 
-              setNicknameCookie(values.nickname)
+              setNicknameCookie(values.name)
               setOpen(false)
             })}
             className="grid gap-4 py-4 [&_input]:text-black"
           >
             <FormField
               control={form.control}
-              name="nickname"
+              name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Nickname</FormLabel>
+                  <FormLabel>Name</FormLabel>
                   <FormControl>
-                    <input placeholder="nickname" {...field} />
+                    <input placeholder="Name" {...field} />
                   </FormControl>
                   <FormDescription>
                     This is your public display name.
