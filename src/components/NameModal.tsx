@@ -65,8 +65,6 @@ export default function NameModal({
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit((values) => {
-              console.log(values)
-
               setNicknameCookie(values.name)
               setOpen(false)
             })}
