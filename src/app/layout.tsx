@@ -19,9 +19,9 @@ export default async function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en">
-      <body className={cn(inter.className, "dark")}>
+      <body className={cn(inter.className, "dark min-h-screen")}>
         <SocketProvider>
-          <Navbar className="bg-gray-800" />
+          <Navbar className="absolute bg-gray-800" />
           {children}
         </SocketProvider>
       </body>
