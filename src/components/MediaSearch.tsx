@@ -20,6 +20,8 @@ import {
   ShieldCloseIcon,
 } from "lucide-react"
 
+import { useSocket } from "./providers/socket-provider"
+
 import { cn } from "@/lib/utils"
 import { songSearch } from "@/server/actions/songSearch"
 
@@ -38,7 +40,7 @@ const OPTIONS = {
 
 type SearchResults = Awaited<ReturnType<typeof songSearch>>
 
-export default function MediaSearch() {
+const MediaSearch = () => {
   const [dialogOpen, setDialogOpen] = useState(false)
 
   const [query, setQuery] = useState("")
@@ -47,6 +49,8 @@ export default function MediaSearch() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState("")
   const [results, setResults] = useState<SearchResults>()
+
+  const { socket } = useSocket()
 
   useEffect(() => {
     if (dialogOpen) {
@@ -82,6 +86,11 @@ export default function MediaSearch() {
         console.log(err)
       }
     }
+  }
+
+  function broadcastMessage(message: string) {
+    console.log("Emitting event: video", message)
+    socket?.emit("video", message)
   }
 
   return (
@@ -138,8 +147,7 @@ export default function MediaSearch() {
                   <CommandItem
                     key={`test-${idx}`}
                     value={result.name}
-                    // TODO something
-                    onSelect={() => console.log(result.name)}
+                    onSelect={broadcastMessage}
                   >
                     {result.name}
                   </CommandItem>
@@ -175,3 +183,5 @@ export default function MediaSearch() {
     </>
   )
 }
+
+export default MediaSearch

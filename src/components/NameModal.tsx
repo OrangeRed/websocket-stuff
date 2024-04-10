@@ -27,6 +27,7 @@ import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { setNicknameCookie } from "@/server/cookies"
 import { Input } from "./ui/input"
+import { useSocket } from "./providers/socket-provider"
 
 const formSchema = z.object({
   name: z
@@ -43,6 +44,8 @@ export default function NameModal({
   children: ReactNode
 }) {
   const [open, setOpen] = useState(false)
+
+  const { socket } = useSocket()
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -67,6 +70,8 @@ export default function NameModal({
           <form
             onSubmit={form.handleSubmit((values) => {
               setNicknameCookie(values.name)
+              socket?.emit("setUser", values.name)
+              socket?.emit("getUsers")
               setOpen(false)
             })}
             className="grid gap-4 py-4 [&_input]:text-black"

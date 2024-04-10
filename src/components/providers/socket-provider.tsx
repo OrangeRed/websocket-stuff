@@ -21,7 +21,13 @@ export const useSocket = () => {
   return useContext(SocketContext)
 }
 
-export const SocketProvider = ({ children }: { children: React.ReactNode }) => {
+export const SocketProvider = ({
+  name,
+  children,
+}: {
+  name: string
+  children: React.ReactNode
+}) => {
   const [socket, setSocket] = useState<Socket | null>(null)
   const [isConnected, setIsConnected] = useState(false)
 
@@ -32,9 +38,18 @@ export const SocketProvider = ({ children }: { children: React.ReactNode }) => {
         addTrailingSlash: false,
       })
 
-    socketInstance.on("connect", () => setIsConnected(true))
+    socketInstance.on("connect", () => {
+      console.log(name)
+      socketInstance.emit("setUser", name)
+      socketInstance.emit("getUsers")
 
-    socketInstance.on("disconnect", () => setIsConnected(false))
+      setIsConnected(true)
+    })
+
+    socketInstance.on("disconnect", () => {
+      setIsConnected(false)
+      // socketInstance.emit("getUsers")
+    })
 
     socketInstance.on("pong", (str) => console.log("pong:", str))
 
