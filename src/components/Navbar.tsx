@@ -1,7 +1,5 @@
 "use server"
 
-import path from "path"
-import { readFileSync } from "fs"
 import { cookies } from "next/headers"
 
 import { cn, colorsFromString } from "@/lib/utils"
@@ -9,30 +7,24 @@ import { Avatar, AvatarFallback } from "./ui/avatar"
 import { Button } from "./ui/button"
 
 import NameModal from "@/components/NameModal"
+import ConnectionIndicator from "./ConnectionIndicator"
 
-function getRandomAnimalName() {
-  const animals = readFileSync(
-    path.resolve(process.cwd(), "public/animals.txt"),
-    "utf-8",
-  ).split("\n")
-
-  const animal = animals[Math.floor(Math.random() * animals.length)]
-    .split(" ")
-    .at(-1)!
-
-  return `Anonymous ${animal}`
-}
-
-export default async function Navbar({ className }: { className?: string }) {
-  const name = cookies().get("name")?.value ?? getRandomAnimalName()
+export default async function Navbar({
+  name,
+  className,
+}: {
+  name: string
+  className?: string
+}) {
   const [bgColor, textColor] = colorsFromString(name)
 
   return (
-    <nav className={cn("grid h-12 w-full grid-cols-3 gap-4", className)}>
+    <nav className={cn("grid h-12 w-full grid-cols-3 gap-x-4", className)}>
       <span className="col-start-2 flex items-center justify-center">
         Navbar
       </span>
-      <div className="flex w-full items-center justify-end px-4">
+
+      <div className="flex h-full w-full items-center justify-end gap-2 px-4">
         <NameModal defaultName={cookies().has("name") ? name : ""}>
           <Button
             className={cn("rounded-full p-0 ")}
@@ -46,6 +38,7 @@ export default async function Navbar({ className }: { className?: string }) {
                 {name.replace("Anonymous ", "").slice(0, 2)}
               </AvatarFallback>
             </Avatar>
+            <ConnectionIndicator className="absolute bottom-0.5 right-3" />
           </Button>
         </NameModal>
       </div>

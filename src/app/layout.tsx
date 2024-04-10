@@ -5,6 +5,10 @@ import { SocketProvider } from "@/components/providers"
 import Navbar from "@/components/Navbar"
 import { cn } from "@/lib/utils"
 
+import { readFileSync } from "fs"
+import { cookies } from "next/headers"
+import path from "path"
+
 import "./globals.css"
 
 export const metadata: Metadata = {
@@ -14,14 +18,29 @@ export const metadata: Metadata = {
 
 const inter = Inter({ subsets: ["latin"] })
 
+function getRandomAnimalName() {
+  const animals = readFileSync(
+    path.resolve(process.cwd(), "public/animals.txt"),
+    "utf-8",
+  ).split("\n")
+
+  const animal = animals[Math.floor(Math.random() * animals.length)]
+    .split(" ")
+    .at(-1)!
+
+  return `Anonymous ${animal}`
+}
+
 export default async function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
+  const name = cookies().get("name")?.value ?? getRandomAnimalName()
+
   return (
     <html lang="en">
-      <body className={cn(inter.className, "dark min-h-screen")}>
-        <SocketProvider>
-          <Navbar className="absolute bg-gray-800" />
+      <body className={cn(inter.className, "dark h-screen")}>
+        <SocketProvider name={name}>
+          <Navbar className="absolute bg-gray-800" name={name} />
           {children}
         </SocketProvider>
       </body>
