@@ -8,6 +8,7 @@ import { Button } from "./ui/button"
 
 import NameModal from "@/components/NameModal"
 import ConnectionIndicator from "./ConnectionIndicator"
+import ConnectedUsers from "./ConnectedUsers"
 
 export default async function Navbar({
   name,
@@ -25,6 +26,7 @@ export default async function Navbar({
       </span>
 
       <div className="flex h-full w-full items-center justify-end gap-2 px-4">
+        <ConnectedUsers name={name} />
         <NameModal defaultName={cookies().has("name") ? name : ""}>
           <Button
             className={cn("rounded-full p-0 ")}
