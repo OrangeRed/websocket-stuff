@@ -13,8 +13,14 @@ import {
   CommandLoading,
 } from "./ui/command"
 
+import {
+  PlaySquareIcon,
+  AudioWaveformIcon,
+  PlusIcon,
+  ShieldCloseIcon,
+} from "lucide-react"
+
 import { cn } from "@/lib/utils"
-import { PlaySquareIcon, AudioWaveformIcon, PlusIcon } from "lucide-react"
 import { songSearch } from "@/server/actions/songSearch"
 
 const OPTIONS = {
@@ -30,6 +36,8 @@ const OPTIONS = {
   },
 } as const
 
+type SearchResults = Awaited<ReturnType<typeof songSearch>>
+
 export default function MediaSearch() {
   const [dialogOpen, setDialogOpen] = useState(false)
 
@@ -37,9 +45,8 @@ export default function MediaSearch() {
   const [engine, setEngine] = useState<keyof typeof OPTIONS>()
 
   const [loading, setLoading] = useState(false)
-  const [results, setResults] =
-    useState<Awaited<ReturnType<typeof songSearch>>>()
-  const [error, setError] = useState<unknown>()
+  const [error, setError] = useState("")
+  const [results, setResults] = useState<SearchResults>()
 
   useEffect(() => {
     if (dialogOpen) {
@@ -50,11 +57,13 @@ export default function MediaSearch() {
   }, [dialogOpen])
 
   async function handleSearch(value: string) {
-    console.log(value)
-
     try {
-      // TODO validate
-      // validate()
+      if (!Object.keys(OPTIONS).includes(value)) {
+        throw new Error("500")
+      } else if (query.length < 3) {
+        throw new Error("Must be three or more characters long")
+      }
+
       setLoading(true)
       setEngine(value as keyof typeof OPTIONS)
 
@@ -66,7 +75,12 @@ export default function MediaSearch() {
 
       getResults()
     } catch (err) {
-      setError(err)
+      if (err instanceof Error) {
+        setError(err.message)
+      } else {
+        // TODO move logging to server
+        console.log(err)
+      }
     }
   }
 
@@ -84,18 +98,34 @@ export default function MediaSearch() {
       <CommandDialog
         open={dialogOpen}
         onOpenChange={setDialogOpen}
-        shouldFilter={!!results}
+        shouldFilter={!!results?.length}
       >
         <CommandInput
-          placeholder={results ? "Filter results..." : "Search for a song..."}
+          error={error}
+          placeholder={
+            results?.length ? "Filter results..." : "Search for a song..."
+          }
           value={query}
-          onValueChange={setQuery}
+          onValueChange={(v) => {
+            setError("")
+            setQuery(v)
+            if (!results?.length) {
+              setEngine(undefined)
+            }
+          }}
         />
 
         <CommandList>
-          {loading ? (
-            <CommandLoading>Loading...</CommandLoading>
-          ) : engine ? (
+          {error === "500" && (
+            <div className="flex items-center justify-center">
+              <ShieldCloseIcon />
+              <CommandEmpty>Something went wrong.</CommandEmpty>
+            </div>
+          )}
+
+          {loading && <CommandLoading>Loading...</CommandLoading>}
+
+          {!loading && engine && (
             <>
               <CommandGroup
                 heading={`${engine} Results`}
@@ -115,9 +145,15 @@ export default function MediaSearch() {
                   </CommandItem>
                 ))}
               </CommandGroup>
-              <CommandEmpty>No Matching Results</CommandEmpty>
+              <CommandEmpty>
+                {!results?.length
+                  ? "No Search Results."
+                  : "No Matching Results."}
+              </CommandEmpty>
             </>
-          ) : (
+          )}
+
+          {!loading && !engine && (
             <CommandGroup heading="Search Engines">
               {Object.entries(OPTIONS).map(([key, { icon }]) => {
                 return (

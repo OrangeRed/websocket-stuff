@@ -26,6 +26,7 @@ import { z } from "zod"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { setNicknameCookie } from "@/server/cookies"
+import { Input } from "./ui/input"
 
 const formSchema = z.object({
   name: z
@@ -77,7 +78,11 @@ export default function NameModal({
                 <FormItem>
                   <FormLabel>Name</FormLabel>
                   <FormControl>
-                    <input placeholder="Name" {...field} />
+                    <Input
+                      className="text-black dark:text-white"
+                      placeholder="Name"
+                      {...field}
+                    />
                   </FormControl>
                   <FormDescription>
                     This is your public display name.
