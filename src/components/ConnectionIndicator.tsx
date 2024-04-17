@@ -2,6 +2,7 @@
 
 import { useSocket } from "@/components/providers/socket-provider"
 import { Badge } from "@/components/ui/badge"
+
 import { cn } from "@/lib/utils"
 
 const ConnectionIndicator = ({ className }: { className?: string }) => {

@@ -1,9 +1,10 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { useSocket } from "./providers/socket-provider"
 
-import { Avatar, AvatarFallback } from "./ui/avatar"
+import { useSocket } from "@/components/providers/socket-provider"
+import { Avatar, AvatarFallback } from "@/components/ui/avatar"
+
 import { colorsFromString } from "@/lib/utils"
 
 const ConnectedUsers = ({ name }: { name: string }) => {

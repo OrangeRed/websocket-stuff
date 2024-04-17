@@ -1,7 +1,8 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { useSocket } from "./providers/socket-provider"
+
+import { useSocket } from "@/components/providers/socket-provider"
 
 const MediaDisplay = () => {
   const [media, setMedia] = useState<string[]>()

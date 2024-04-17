@@ -3,13 +3,13 @@
 import { cookies } from "next/headers"
 
 import { cn, colorsFromString } from "@/lib/utils"
+
+import ConnectedUsers from "./ConnectedUsers"
+import ConnectionIndicator from "./ConnectionIndicator"
+import MediaSearch from "./MediaSearch"
+import NameModal from "./NameModal"
 import { Avatar, AvatarFallback } from "./ui/avatar"
 import { Button } from "./ui/button"
-
-import NameModal from "@/components/NameModal"
-import ConnectionIndicator from "./ConnectionIndicator"
-import ConnectedUsers from "./ConnectedUsers"
-import MediaSearch from "./MediaSearch"
 
 export default async function Navbar({
   name,

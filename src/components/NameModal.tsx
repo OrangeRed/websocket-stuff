@@ -1,7 +1,12 @@
 "use client"
 
 import { type ReactNode, useState } from "react"
+import { useForm } from "react-hook-form"
 
+import { zodResolver } from "@hookform/resolvers/zod"
+import { z } from "zod"
+
+import { useSocket } from "@/components/providers/socket-provider"
 import { Button } from "@/components/ui/button"
 import {
   Dialog,
@@ -21,13 +26,9 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form"
+import { Input } from "@/components/ui/input"
 
-import { z } from "zod"
-import { useForm } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod"
 import { setNicknameCookie } from "@/server/cookies"
-import { Input } from "./ui/input"
-import { useSocket } from "./providers/socket-provider"
 
 const formSchema = z.object({
   name: z

@@ -1,6 +1,7 @@
+import { type NextApiRequest, type NextApiResponse } from "next"
+
 import { Server as HttpServer } from "http"
 import { Server as SocketServer } from "socket.io"
-import { type NextApiResponse, type NextApiRequest } from "next"
 
 export const config = {
   api: {

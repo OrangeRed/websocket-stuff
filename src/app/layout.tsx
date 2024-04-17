@@ -1,13 +1,14 @@
-import { Inter } from "next/font/google"
 import type { Metadata } from "next"
-
-import { SocketProvider } from "@/components/providers"
-import Navbar from "@/components/Navbar"
-import { cn } from "@/lib/utils"
+import { Inter } from "next/font/google"
+import { cookies } from "next/headers"
 
 import { readFileSync } from "fs"
-import { cookies } from "next/headers"
 import path from "path"
+
+import Navbar from "@/components/Navbar"
+import { SocketProvider } from "@/components/providers"
+
+import { cn } from "@/lib/utils"
 
 import "./globals.css"
 

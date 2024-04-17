@@ -1,7 +1,9 @@
 "use client"
 
 import { createContext, useContext, useEffect, useState } from "react"
+
 import { io as ClientIO, type Socket } from "socket.io-client"
+
 import {
   type ClientToServerEvents,
   type ServerToClientEvents,

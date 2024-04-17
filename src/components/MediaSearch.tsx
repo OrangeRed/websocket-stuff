@@ -1,8 +1,10 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { PlaySquareIcon, AudioWaveformIcon } from "lucide-react"
 
+import { AudioWaveformIcon, PlaySquareIcon } from "lucide-react"
+
+import { useSocket } from "@/components/providers/socket-provider"
 import {
   Command,
   CommandDialog,
@@ -12,9 +14,7 @@ import {
   CommandItem,
   CommandList,
   CommandLoading,
-} from "./ui/command"
-
-import { useSocket } from "./providers/socket-provider"
+} from "@/components/ui/command"
 
 import { cn } from "@/lib/utils"
 import { songSearch } from "@/server/actions/songSearch"
