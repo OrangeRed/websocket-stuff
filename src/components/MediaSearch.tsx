@@ -1,9 +1,10 @@
 "use client"
 
 import { useEffect, useState } from "react"
+import { PlaySquareIcon, AudioWaveformIcon } from "lucide-react"
 
-import { Button } from "./ui/button"
 import {
+  Command,
   CommandDialog,
   CommandEmpty,
   CommandGroup,
@@ -12,13 +13,6 @@ import {
   CommandList,
   CommandLoading,
 } from "./ui/command"
-
-import {
-  PlaySquareIcon,
-  AudioWaveformIcon,
-  PlusIcon,
-  ShieldCloseIcon,
-} from "lucide-react"
 
 import { useSocket } from "./providers/socket-provider"
 
@@ -40,119 +34,95 @@ const OPTIONS = {
 
 type SearchResults = Awaited<ReturnType<typeof songSearch>>
 
-const MediaSearch = () => {
-  const [dialogOpen, setDialogOpen] = useState(false)
-
+const MediaSearch = ({ className }: { className?: string }) => {
   const [query, setQuery] = useState("")
   const [engine, setEngine] = useState<keyof typeof OPTIONS>()
 
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState("")
+  const [open, setOpen] = useState(false)
+  const [loading, setLoading] = useState(true)
   const [results, setResults] = useState<SearchResults>()
 
   const { socket } = useSocket()
 
   useEffect(() => {
-    if (dialogOpen) {
-      setQuery("")
-      setEngine(undefined)
-      setResults(undefined)
-    }
-  }, [dialogOpen])
-
-  async function handleSearch(value: string) {
-    try {
-      if (!Object.keys(OPTIONS).includes(value)) {
-        throw new Error("500")
-      } else if (query.length < 3) {
-        throw new Error("Must be three or more characters long")
-      }
-
-      setLoading(true)
-      setEngine(value as keyof typeof OPTIONS)
-
+    if (query && engine) {
       const getResults = async () => {
-        setResults(await OPTIONS[value as keyof typeof OPTIONS].action(query))
-        setQuery("")
+        setResults(await OPTIONS[engine].action(query))
         setLoading(false)
       }
 
+      setOpen(true)
+      setLoading(true)
+      setResults(undefined)
       getResults()
-    } catch (err) {
-      if (err instanceof Error) {
-        setError(err.message)
-      } else {
-        // TODO move logging to server
-        console.log(err)
-      }
     }
-  }
+  }, [!!(query && engine)])
 
   function broadcastMessage(message: string) {
-    console.log("Emitting event: video", message)
     socket?.emit("video", message)
+
+    setOpen(false)
+    setEngine(undefined)
+    setQuery("")
   }
 
   return (
-    <>
-      <Button
-        className="absolute bottom-5 right-5 rounded-xl"
-        onClick={() => setDialogOpen(true)}
-        variant="default"
-        size="icon"
-      >
-        <PlusIcon />
-      </Button>
-
-      <CommandDialog
-        open={dialogOpen}
-        onOpenChange={setDialogOpen}
-        shouldFilter={!!results?.length}
-      >
+    <div className={cn("[&_div]:border-0", className)}>
+      <Command shouldFilter={false} loop>
         <CommandInput
-          error={error}
-          placeholder={
-            results?.length ? "Filter results..." : "Search for a song..."
-          }
+          placeholder="Search for a song..."
           value={query}
-          onValueChange={(v) => {
-            setError("")
-            setQuery(v)
-            if (!results?.length) {
-              setEngine(undefined)
-            }
-          }}
+          onValueChange={(v) => setQuery(v)}
         />
 
         <CommandList>
-          {error === "500" && (
-            <div className="flex items-center justify-center">
-              <ShieldCloseIcon />
-              <CommandEmpty>Something went wrong.</CommandEmpty>
-            </div>
-          )}
+          <CommandGroup
+            className={cn(query.length < 2 ? "hidden" : "")}
+            heading="Search Engines"
+          >
+            {Object.entries(OPTIONS).map(([key, { icon }]) => {
+              return (
+                <CommandItem
+                  className="capitalize"
+                  key={key}
+                  value={key}
+                  onSelect={(v) => setEngine(v as keyof typeof OPTIONS)}
+                >
+                  {icon}
+                  {key}
+                </CommandItem>
+              )
+            })}
+          </CommandGroup>
+        </CommandList>
+      </Command>
 
-          {loading && <CommandLoading>Loading...</CommandLoading>}
+      <CommandDialog
+        shouldFilter
+        open={open}
+        onOpenChange={() => {
+          setOpen(false)
+          setEngine(undefined)
+          setQuery("")
+        }}
+      >
+        <CommandInput placeholder="Filter results..." />
 
-          {!loading && engine && (
+        <CommandList>
+          {loading ? (
+            <CommandLoading>Loading Results...</CommandLoading>
+          ) : (
             <>
-              <CommandGroup
-                heading={`${engine} Results`}
-                className={cn(
-                  "[&_[cmdk-group-heading]]:capitalize",
-                  results?.length || "hidden",
-                )}
-              >
-                {results?.map((result, idx) => (
-                  <CommandItem
-                    key={`test-${idx}`}
-                    value={result.name}
-                    onSelect={broadcastMessage}
-                  >
-                    {result.name}
-                  </CommandItem>
-                ))}
-              </CommandGroup>
+              {results?.map((result, idx) => (
+                <CommandItem
+                  key={`test-${idx}`}
+                  value={result.name}
+                  onSelect={broadcastMessage}
+                >
+                  {result.name}
+                </CommandItem>
+              ))}
+
               <CommandEmpty>
                 {!results?.length
                   ? "No Search Results."
@@ -160,27 +130,9 @@ const MediaSearch = () => {
               </CommandEmpty>
             </>
           )}
-
-          {!loading && !engine && (
-            <CommandGroup heading="Search Engines">
-              {Object.entries(OPTIONS).map(([key, { icon }]) => {
-                return (
-                  <CommandItem
-                    className="capitalize"
-                    key={key}
-                    value={key}
-                    onSelect={handleSearch}
-                  >
-                    {icon}
-                    {key}
-                  </CommandItem>
-                )
-              })}
-            </CommandGroup>
-          )}
         </CommandList>
       </CommandDialog>
-    </>
+    </div>
   )
 }
 

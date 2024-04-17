@@ -41,7 +41,7 @@ export const SocketProvider = ({
     socketInstance.on("connect", () => {
       console.log(name)
       socketInstance.emit("setUser", name)
-      socketInstance.emit("getUsers")
+      // socketInstance.emit("getUsers")
 
       setIsConnected(true)
     })

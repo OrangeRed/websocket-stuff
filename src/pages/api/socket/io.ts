@@ -23,7 +23,7 @@ export type NextApiResponseWithSocketServer = NextApiResponse & {
 
 export type ServerToClientEvents = {
   pong: (str: string) => void
-  video: (url: string) => void
+  videoQueue: (videos: string[]) => void
   users: (socketIds: string[]) => void
   // noArg: () => void;
   // basicEmit: (a: number, b: string, c: Buffer) => void;
@@ -39,6 +39,9 @@ export type ClientToServerEvents = {
 }
 
 const USERS: { [key: string]: string } = {}
+
+// TODO
+const VIDEOS: string[] = []
 
 const ioHandler = (
   req: NextApiRequest,
@@ -63,8 +66,6 @@ const ioHandler = (
     }
 
     io.on("connect", async (socket) => {
-      io.emit("users", await getCurrentUsers())
-
       socket.on("disconnect", async () => {
         delete USERS[socket.id]
 
@@ -80,16 +81,17 @@ const ioHandler = (
         io.emit("users", await getCurrentUsers())
       })
 
-      socket.on("setUser", (name) => {
+      socket.on("setUser", async (name) => {
         USERS[socket.id] = name
 
         console.log(USERS, "\n")
+        io.emit("users", await getCurrentUsers())
       })
 
-      // TODO
       socket.on("video", (url) => {
-        io.emit("video", url)
         console.log("On Server:", url)
+        VIDEOS.push(url)
+        io.emit("videoQueue", VIDEOS)
       })
     })
 

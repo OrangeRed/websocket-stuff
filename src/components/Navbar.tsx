@@ -9,6 +9,7 @@ import { Button } from "./ui/button"
 import NameModal from "@/components/NameModal"
 import ConnectionIndicator from "./ConnectionIndicator"
 import ConnectedUsers from "./ConnectedUsers"
+import MediaSearch from "./MediaSearch"
 
 export default async function Navbar({
   name,
@@ -20,12 +21,10 @@ export default async function Navbar({
   const [bgColor, textColor] = colorsFromString(name)
 
   return (
-    <nav className={cn("grid h-12 w-full grid-cols-3 gap-x-4", className)}>
-      <span className="col-start-2 flex items-center justify-center">
-        Navbar
-      </span>
+    <nav className={cn("grid h-14 w-full grid-cols-3 gap-x-4", className)}>
+      <MediaSearch className="col-start-2 my-1" />
 
-      <div className="flex h-full w-full items-center justify-end gap-2 px-4">
+      <div className="flex h-14 w-full items-center justify-end gap-2 px-4">
         <ConnectedUsers name={name} />
         <NameModal defaultName={cookies().has("name") ? name : ""}>
           <Button
@@ -40,7 +39,7 @@ export default async function Navbar({
                 {name.replace("Anonymous ", "").slice(0, 2)}
               </AvatarFallback>
             </Avatar>
-            <ConnectionIndicator className="absolute bottom-0.5 right-3" />
+            <ConnectionIndicator className="absolute bottom-1 right-3" />
           </Button>
         </NameModal>
       </div>
